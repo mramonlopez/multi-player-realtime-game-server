@@ -1,0 +1,26 @@
+{
+  "name": "two-player-realtime-game-server",
+  "version": "0.0.1",
+  "description": "A Node.js server for two player realtime games",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mramonlopez/two-player-realtime-game-server.git"
+  },
+  "keywords": [
+    "GAME",
+    "REALTIME"
+  ],
+  "author": "M. Ramon Lopez Torres",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mramonlopez/two-player-realtime-game-server/issues"
+  },
+  "homepage": "https://github.com/mramonlopez/two-player-realtime-game-server#readme",
+  "dependencies": {
+    "websocket": "^1.0.22"
+  }
+}
