@@ -17,12 +17,10 @@ var MESSAGE_TYPES = {
     'roomResponse': 'roomResponse',
 }
 
-
 server.on('request', function(request) {
     var completed = false,
-        connection = request.accept(null, request.origin);
-
-        connection.on('message', function(message) {
+        connection = request.accept(null, request.origin),
+        onMessage = function(message) {
             if (message.type === 'utf8') {
                 var parsed = JSON.parse(message.utf8Data);
 
@@ -55,21 +53,15 @@ server.on('request', function(request) {
                         connection.send(JSON.stringify(response));
 
                         if (currentRoom.completed) {
+                            currentRoom.startListening();
                             activeRooms[currentRoom.roomID] = currentRoom;
 
                             currentRoom = undefined;
                         }
                     }
                 }
-
-                console.log('Received Message: ' + message.utf8Data);
             }
-        });
+        };
 
-
-    connection.on('close', function(reasonCode, description) {
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-    });
-
-    
+    connection.once('message', onMessage);
 }); 

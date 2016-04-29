@@ -35,6 +35,15 @@ Room.prototype.reconectPlayer = function (playerIndex, connection) {
 	this.sendMessageToAllExcept('PLAYER', playerIndex, 'RECONECTED', playerIndex);
 };
 
+Room.prototype.sendMessageToPlayer = function (message, player) {
+	var conn = this.playerConnections[i];
+
+	if (conn) {
+		console.log('MENSSAGE SENT TO ', i, '>>>>', message);
+		conn.send(message);
+	}
+};
+
 Room.prototype.sendMessageToAll = function (message) {
 	for (var i = 0, len = this.playerConnections.length; i < len; i++) {
 		var conn = this.playerConnections[i];
@@ -52,6 +61,18 @@ Room.prototype.sendMessageToAllExcept = function (message, player) {
 			console.log('MENSSAGE SENT TO ', i, '>>>>', message);
 			conn.send(message);
 		}
+	}
+};
+
+Room.prototype.startListening = function() {
+	for (var i = 0, len = this.playerConnections.length; i < len; i++) {
+		var conn = this.playerConnections[i];
+		
+		conn.on('message', function(message) {
+			var player = i;
+
+			console.log('Message received at ROOM', message.utf8Data, 'from player', i);
+		});
 	}
 };
 
