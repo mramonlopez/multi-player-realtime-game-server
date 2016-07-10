@@ -11,25 +11,59 @@ var server = new SocketServer({
     httpServer: Http.createServer().listen(SOCKET)
 });
 
-var activeRooms = [],
+var activeRooms = {},
     currentRoom = undefined;
 
+var MESSAGE_TYPES = {
+    'roomRequest': 'roomRequest',
+    'roomResponse': 'roomResponse',
+}
 
 server.on('request', function(request) {
     var completed = false,
-        newConnection = request.accept(null, request.origin);
+        connection = request.accept(null, request.origin),
+        onMessage = function(message) {
+            if (message.type === 'utf8') {
+                var parsed = JSON.parse(message.utf8Data);
 
-    if (!currentRoom) {
-        var roomID = (new Date()).getTime();
+                if (parsed.type === MESSAGE_TYPES.roomRequest) {
+                    if (parsed.roomID && parsed.playerIndex) {
+                        // Reconnect player
+                        var room = activeRooms[parsed.roomID];
 
-        currentRoom = new Room(roomID);
-    }
+                        room.reconectPlayer(parsed.playerIndex);
+                    } else {
+                        // New player
+                        if (!currentRoom) {
+                            // New room
+                            var roomID = 'room' + ((new Date()).getTime()).toString();
 
-    completed = currentRoom.addPlayerConnection(newConnection);
+                            currentRoom = new Room(roomID);
+                            console.log('Room added:', roomID);
+                        }
 
-    if (completed) {
-        activeRooms.push(completed);
+                        // Add player to room
+                        var playerIndex = currentRoom.addPlayerConnection(connection);
 
-        currentRoom = undefined;
-    }
+                        // Notify to client
+                        var response = {
+                            type: MESSAGE_TYPES.roomResponse,
+                            roomID: currentRoom.roomID,
+                            playerIndex: playerIndex
+                        }
+
+                        connection.send(JSON.stringify(response));
+
+                        if (currentRoom.completed) {
+                            currentRoom.startListening();
+                            activeRooms[currentRoom.roomID] = currentRoom;
+
+                            currentRoom = undefined;
+                        }
+                    }
+                }
+            }
+        };
+
+    connection.once('message', onMessage);
 }); 
