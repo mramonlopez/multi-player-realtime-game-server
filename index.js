@@ -1,12 +1,14 @@
 'use strict';
 
+var SOCKET = 1337;
+
 var SocketServer = require('websocket').server, 
     Http = require('http');
 
 var Room = require('./modules/room');
 
 var server = new SocketServer({
-    httpServer: Http.createServer().listen(1337)
+    httpServer: Http.createServer().listen(SOCKET)
 });
 
 var activeRooms = [],
