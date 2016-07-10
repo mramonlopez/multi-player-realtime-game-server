@@ -1,1 +1,1 @@
-# two-player-realtime-game-server
+# multi-player-realtime-game-server
