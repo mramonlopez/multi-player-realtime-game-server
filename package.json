@@ -1,5 +1,5 @@
 {
-  "name": "multiplayer-player-realtime-game-server",
+  "name": "multiplayer-realtime-game-server",
   "version": "0.0.1",
   "description": "A simple Node.js server for multi-player realtime games",
   "main": "index.js",
